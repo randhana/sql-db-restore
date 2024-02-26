@@ -2,6 +2,7 @@ import pymssql
 import mysql.connector
 from Database import Database
 import time
+from datetime import datetime
 import os
 
 def execute_sql_statement(sql_statement, dbname=None):
@@ -53,6 +54,10 @@ def log_status(status, dbname):
     except Exception as e:
         print("Error logging status to database:", str(e))
 
+def get_current_date():
+    current_date = datetime.now().date()
+    formatted_date = current_date.strftime('%Y-%m-%d')
+    return formatted_date
 
 def get_backup_file(folder_path, file_prefix):
     for file in os.listdir(folder_path):
@@ -67,8 +72,9 @@ databases = {
     "course": "course"
 }
 
+curent_date = get_current_date()
 #backup folder path
-folder_path = "D:\\backup_DB"
+folder_path = "D:\\backup_DB\\{curent_date}"
 
 backup_files = {}
 
