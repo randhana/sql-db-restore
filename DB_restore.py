@@ -85,7 +85,7 @@ for dbname, file_prefix in databases.items():
         backup_files[dbname] = backup_file
     else:
         print(f"No backup file found for {dbname}")
-        log_status(f"No backup file found for {dbname}")
+        log_error(f"No backup file found for {dbname}")
 
 # Execute restore 
 for dbname, backup_file in backup_files.items():
