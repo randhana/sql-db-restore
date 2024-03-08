@@ -60,9 +60,12 @@ def get_current_date():
     return formatted_date
 
 def get_backup_file(folder_path, file_prefix):
-    for file in os.listdir(folder_path):
-        if file.startswith(file_prefix) and file.endswith(".bak"):
-            return os.path.join(folder_path, file)
+    try:
+        for file in os.listdir(folder_path):
+            if file.startswith(file_prefix) and file.endswith(".bak"):
+                return os.path.join(folder_path, file)
+    except FileNotFoundError:
+        return None
     return None
 
 #Database names 
