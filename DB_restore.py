@@ -109,4 +109,9 @@ for dbname, backup_file in backup_files.items():
     execute_sql_statement(task2_sql, dbname)
     execute_sql_statement(task3_sql)
     log_status_db("Success",f"Restore completed successfully for database {dbname}", dbname)
+
+print("--------------------------------End-------------------------------------------------------------------")
+sys.stdout.close()
+sys.stderr.close()
+
         
