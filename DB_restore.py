@@ -2,7 +2,7 @@ import pymssql
 import mysql.connector
 from Database import Database
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 #log status
@@ -42,6 +42,25 @@ def get_current_date():
     formatted_date = current_date.strftime('%Y-%m-%d')
     return formatted_date
 
+def remove_old_backups(path):
+    def is_date(string):
+        try:
+            datetime.strptime(string, '%Y-%m-%d')
+            return True
+        except ValueError:
+            return False
+
+    current_date = datetime.now()
+    cutoff_date = current_date - timedelta(days=3)
+    
+    for folder_name in os.listdir(path):
+        folder_path = os.path.join(path, folder_name)
+        if os.path.isdir(folder_path) and is_date(folder_name):
+            folder_date = datetime.strptime(folder_name, '%Y-%m-%d')
+            if folder_date < cutoff_date:
+                shutil.rmtree(folder_path)
+                print(f"Deleted folder: {folder_name}")
+                
 def get_backup_file(folder_path, file_prefix):
     try:
         for file in os.listdir(folder_path):
@@ -77,13 +96,13 @@ databases = {
 
 curent_date = get_current_date()
 #backup folder path
-folder_path = "D:\\backup_DB\\{curent_date}"
+backup_folder = "D:\\backup_DB\\{curent_date}"
 
 backup_files = {}
 
 for dbname, file_prefix in databases.items():
     try:
-        backup_file = get_backup_file(folder_path, file_prefix)
+        backup_file = get_backup_file(backup_folder, file_prefix)
         if backup_file:
             print(backup_file)
             backup_files[dbname] = backup_file
@@ -111,6 +130,7 @@ for dbname, backup_file in backup_files.items():
     log_status_db("Success",f"Restore completed successfully for database {dbname}", dbname)
 
 print("--------------------------------End-------------------------------------------------------------------")
+remove_old_backups(backup_folder)
 sys.stdout.close()
 sys.stderr.close()
 
